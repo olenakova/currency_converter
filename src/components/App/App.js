@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {useHttp} from "../../hooks/http.hook";
+import { useHttp } from "../../hooks/http.hook";
 import CurrencyRatesComponent from "../CurrencyRatesComponent/CurrencyRatesComponent";
 import CurrencyInputComponent from "../CurrencyInputComponent/CurrencyInputComponent";
 import './App.css';
@@ -11,19 +11,16 @@ const App = () => {
   const [toCurrency, setToCurrency] = useState('USD');
   const [convertedAmount, setConvertedAmount] = useState(0);
 
-  const handleFromAmountChange = e => {
-    setAmount(e.target.value);
+  const handleAmountAndCurrencyChange = (value, type) => {
+    if (type === 'amount') {
+      setAmount(value);
+    } else if (type === 'fromCurrency') {
+      setFromCurrency(value);
+    } else if (type === 'toCurrency') {
+      setToCurrency(value);
+    }
   };
 
-  const handleFromCurrencyChange = e => {
-    setFromCurrency(e.target.value);
-  };
-
-  const handleToCurrencyChange = e => {
-    setToCurrency(e.target.value);
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const convertCurrency = () => {
     if (currencyRates[fromCurrency] && currencyRates[toCurrency]) {
       const converted = (amount / currencyRates[fromCurrency]) * currencyRates[toCurrency];
@@ -33,7 +30,7 @@ const App = () => {
 
   useEffect(() => {
     convertCurrency();
-  }, [amount, fromCurrency, toCurrency, currencyRates, convertCurrency]);
+  }, [amount, fromCurrency, toCurrency, currencyRates]);
 
   return (
       <div className="currency-converter">
@@ -44,8 +41,8 @@ const App = () => {
             <CurrencyInputComponent
                 amount={amount}
                 fromCurrency={fromCurrency}
-                handleAmountChange={handleFromAmountChange}
-                handleCurrencyChange={handleFromCurrencyChange}
+                handleAmountChange={(e) => handleAmountAndCurrencyChange(e.target.value, 'amount')}
+                handleCurrencyChange={(e) => handleAmountAndCurrencyChange(e.target.value, 'fromCurrency')}
                 label="Міняю"
             />
           </div>
@@ -54,7 +51,7 @@ const App = () => {
                 amount={convertedAmount}
                 fromCurrency={toCurrency}
                 handleAmountChange={() => {}}
-                handleCurrencyChange={handleToCurrencyChange}
+                handleCurrencyChange={(e) => handleAmountAndCurrencyChange(e.target.value, 'toCurrency')}
                 label="Отримую"
             />
           </div>
@@ -64,4 +61,3 @@ const App = () => {
 };
 
 export default App;
-
